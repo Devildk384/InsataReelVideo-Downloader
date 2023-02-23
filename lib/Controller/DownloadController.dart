@@ -46,27 +46,16 @@ class DownloadController extends GetxController {
         request.cookies.add(Cookie(element.name, element.value));
       });
       var response = await request.close();
-      print(response);
-      print("response");
       if (response.statusCode == HttpStatus.OK) {
         var json = await response.transform(utf8.decoder).join();
-         print(json);
-          print("json");
         var data = jsonDecode(json);
           // print(data["graphql"]["shortcode_media"]["display_resources"]);
-          
-          print("data");
-        if (!isLogin) {
-                    print("LOGIN");
-
+        if (isLogin) {
           InstaPostWithLogin postWithLogin = InstaPostWithLogin.fromJson(data);
           videoURLLLLL = postWithLogin.items?.first.videoVersions?.first.url;
         } else {
           InstaPostWithoutLogin post = InstaPostWithoutLogin.fromJson(data);
           videoURLLLLL = post.graphql?.shortcodeMedia?.videoUrl;
-          print(videoURLLLLL);
-          print("sdkjdsjjdsj");
-
         }
       }
     } catch (exception) {
@@ -84,8 +73,6 @@ class DownloadController extends GetxController {
       print(savePath);
       await dio.download(videoURLLLLL, savePath);
       final result = await ImageGallerySaver.saveFile(savePath,isReturnPathOfIOS: true);
-      print(result);
-      print(result);
       return result["filePath"];
     }
   }
@@ -97,10 +84,12 @@ class DownloadController extends GetxController {
       path = null;
       update();
       await _startDownload(link, context).then((value) {
+        print(value);
         if (value == null) throw Exception();
         path = value;
         update();
         List allVideosPath = box.read("allVideo") ?? [];
+        print(allVideosPath);
         allVideosPath.add(path);
         box.write("allVideo", allVideosPath);
       });

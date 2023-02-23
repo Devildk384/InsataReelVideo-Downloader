@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
             padding: const EdgeInsets.only(right: 15),
             child: InkWell(
                 onTap: () {
-                  // Get.to(DownloadedList());
+                  Get.to(DownloadedList());
                 },
                 child: Icon(
                   Icons.download,
