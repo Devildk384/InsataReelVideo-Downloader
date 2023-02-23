@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:testinsatapp/Controller/DownloadController.dart';
-import 'package:testinsatapp/DownloadedList.dart';
-import 'package:testinsatapp/GenrateVideoFromPath.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:InstaReels/Controller/DownloadController.dart';
+import 'package:InstaReels/DownloadedList.dart';
+import 'package:InstaReels/GenrateVideoFromPath.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -11,8 +12,93 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  
   DownloadController downloadController = Get.put(DownloadController());
   TextEditingController urlController = TextEditingController();
+  late BannerAd _bannerAd;
+  final bool _isBottomBannerAdLoaded = false;
+  late AppOpenAd? myAppOpenAd;
+late RewardedAd _rewardedAd;
+bool _isRewardedAdLoaded= false;
+   
+late InterstitialAd _interstitialAd;
+bool _isInterstitialAdLoaded = false;
+
+@override
+void initState() {
+  super.initState();
+
+   _bannerAd =BannerAd(
+    adUnitId: "ca-app-pub-8947607922376336/5735343105",
+    size: AdSize.banner,
+    listener: BannerAdListener(
+      onAdLoaded: (_) {
+        setState(() {
+          // _isBottomBannerAdLoaded = true;
+        });
+      },
+      onAdFailedToLoad: (ad, error) {
+        setState(() {
+          // _isBottomBannerAdLoaded = false;
+        });
+        ad.dispose();
+      },
+    ),
+    request: const AdRequest(),
+  )..load();
+
+  // RewardedAd.load(
+  //   adUnitId: "ca-app-pub-8947607922376336/5113360720",
+  //   request: const AdRequest(),
+  //   rewardedAdLoadCallback: RewardedAdLoadCallback(
+  //     onAdLoaded: (ad) {
+  //       _rewardedAd = ad;
+  //       ad.fullScreenContentCallback = FullScreenContentCallback(
+  //         onAdDismissedFullScreenContent: (ad) {
+  //           setState(() {
+  //             _isRewardedAdLoaded = false;
+  //           });
+  //         },
+  //       );
+  //       setState(() {
+  //         _isRewardedAdLoaded = true;
+  //       });
+  //     },
+  //     onAdFailedToLoad: (err) {
+  //       setState(() {
+  //         _isRewardedAdLoaded = false;
+  //       });
+  //     },
+  //   ),
+  // );
+
+   InterstitialAd.load(
+    adUnitId: "ca-app-pub-8947607922376336/2290357465",
+    request: const AdRequest(),
+    adLoadCallback: InterstitialAdLoadCallback(
+      onAdLoaded: (InterstitialAd ad) {
+        _interstitialAd = ad;
+        _isInterstitialAdLoaded = true;
+      },
+      onAdFailedToLoad: (LoadAdError error) {
+        _isInterstitialAdLoaded = false;
+        _interstitialAd.dispose();
+      },
+    ),
+  );
+}
+
+
+@override
+void dispose() {
+  _bannerAd.dispose();
+  _interstitialAd.dispose();
+  // _rewardedAd.dispose();
+  super.dispose();
+}
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +107,7 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          "Reels Downloader",
+          "Insta Reels Downloader",
           style: TextStyle(color: Colors.black),
         ),
         actions: [
@@ -46,21 +132,32 @@ class _HomeState extends State<Home> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 20),
-                child: GetBuilder(
-                  init: downloadController,
-                  builder: (_) => Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 200,
-                          width: 150,
-                          child: downloadController.path != null
-                              ? Container(
-                                  child: GenrateVideoFrompath(
-                                      downloadController.path ?? ""))
-                              : Center(child: Text("No recent download")),
-                        ),
-                      ]),
+                child: Column(
+                  children: [
+                      //  Container(
+                      //   height: 58,
+                      //   child: AdWidget(ad: _bannerAd),
+                      //  ),
+       
+                        // Padding(padding: EdgeInsets.all(5), child: AdWidget(ad: _bannerAd),),
+  
+                         GetBuilder(
+                      init: downloadController,
+                      builder: (_) => Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 200,
+                              width: 150,
+                              child: downloadController.path != null
+                                  ? Container(
+                                      child: GenrateVideoFrompath(
+                                          downloadController.path ?? ""))
+                                  : Center(child: Text("No recent download")),
+                            ),
+                          ]),
+                    ),
+                  ],
                 ),
               ),
               Padding(
@@ -99,6 +196,9 @@ class _HomeState extends State<Home> {
                             onTap: () {
                               downloadController.downloadReal(
                                   urlController.text, context);
+                                  if (_isInterstitialAdLoaded) {  
+                          _interstitialAd.show();   // <- here
+                            }
                             },
                             child: Container(
                               height: 40,
@@ -119,10 +219,10 @@ class _HomeState extends State<Home> {
                         ),
                 ),
               ),
-              Container(
-                height: 200,
-                child: Center(child: Text("Made in ❤️ with Flutter")),
-              ),
+              // Container(
+              //   height: 200,
+              //   child: Center(child: Text("Made in ❤️ with Flutter")),
+              // ),
             ],
           ),
         ),

@@ -1,4 +1,4 @@
-name: testinsatapp
+name: InstaReels
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -46,6 +46,8 @@ dependencies:
   webview_flutter: ^3.0.4
   webview_cookie_manager: ^2.0.6
   external_path: ^1.0.3
+  google_mobile_ads: ^2.3.0
+
 
 dependency_overrides:
   platform: ^3.1.0

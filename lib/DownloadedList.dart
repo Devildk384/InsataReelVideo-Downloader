@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:testinsatapp/GenrateVideoFromPath.dart';
+import 'package:InstaReels/GenrateVideoFromPath.dart';
 
 class DownloadedList extends StatefulWidget {
   _DownloadedListState createState() => _DownloadedListState();

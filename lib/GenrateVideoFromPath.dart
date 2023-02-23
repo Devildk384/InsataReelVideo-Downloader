@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:testinsatapp/VideoPlayer.dart';
+import 'package:InstaReels/VideoPlayer.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 class GenrateVideoFrompath extends StatefulWidget {
@@ -16,7 +16,7 @@ class _GenrateVideoFrompathState extends State<GenrateVideoFrompath> {
   bool loading = true;
   @override
   void initState() {
-    genrateThumb();
+    // genrateThumb();
     super.initState();
   }
 

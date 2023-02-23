@@ -8,9 +8,9 @@ import 'package:get_storage/get_storage.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:testinsatapp/Controller/instagram_login.dart';
-import 'package:testinsatapp/model/insta_post_with_login.dart';
-import 'package:testinsatapp/model/insta_post_without_login.dart';
+import 'package:InstaReels/Controller/instagram_login.dart';
+import 'package:InstaReels/model/insta_post_with_login.dart';
+import 'package:InstaReels/model/insta_post_without_login.dart';
 import 'package:webview_cookie_manager/webview_cookie_manager.dart' as wb;
 
 class DownloadController extends GetxController {
