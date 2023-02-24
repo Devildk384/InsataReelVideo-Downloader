@@ -23,10 +23,14 @@ bool _isRewardedAdLoaded= false;
    
 late InterstitialAd _interstitialAd;
 bool _isInterstitialAdLoaded = false;
+bool _searchStarted = false;
+bool _noTexttoSearch = false;
+
 
 @override
 void initState() {
   super.initState();
+   
 
    _bannerAd =BannerAd(
     adUnitId: "ca-app-pub-8947607922376336/5735343105",
@@ -99,7 +103,6 @@ void dispose() {
 
 
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,13 +137,10 @@ void dispose() {
                 padding: const EdgeInsets.only(top: 20),
                 child: Column(
                   children: [
-                      //  Container(
-                      //   height: 58,
-                      //   child: AdWidget(ad: _bannerAd),
-                      //  ),
-       
-                        // Padding(padding: EdgeInsets.all(5), child: AdWidget(ad: _bannerAd),),
-  
+                       Container(
+                        height: 58,
+                        child: AdWidget(ad: _bannerAd),
+                       ),  
                          GetBuilder(
                       init: downloadController,
                       builder: (_) => Row(
@@ -166,6 +166,26 @@ void dispose() {
                   controller: urlController,
                   autocorrect: true,
                   textAlign: TextAlign.center,
+                  onTap: () {
+                    setState(() {
+                        _searchStarted = false;
+                        _noTexttoSearch =  false;
+                          InterstitialAd.load(
+                                    adUnitId: "ca-app-pub-8947607922376336/2290357465",
+                                    request: const AdRequest(),
+                                    adLoadCallback: InterstitialAdLoadCallback(
+                                      onAdLoaded: (InterstitialAd ad) {
+                                        _interstitialAd = ad;
+                                        _isInterstitialAdLoaded = true;
+                                      },
+                                      onAdFailedToLoad: (LoadAdError error) {
+                                        _isInterstitialAdLoaded = false;
+                                        _interstitialAd.dispose();
+                                      },
+                                    ),
+                                  );
+                    });
+                  },
                   decoration: InputDecoration(
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 0, horizontal: 10),
@@ -194,22 +214,58 @@ void dispose() {
                       : Center(
                           child: InkWell(
                             onTap: () {
-                              downloadController.downloadReal(
+                              if (urlController.text == "") {
+                                setState(() {
+                                  _noTexttoSearch = true;
+                                });
+                              }else{
+                                if (urlController.text.contains("https://www.instagram.com/reel")) {
+                                  
+                                // urlController.text.contains("https://www.instagram.com/reels/videos");
+                                downloadController.downloadReal(
                                   urlController.text, context);
+
                                   if (_isInterstitialAdLoaded) {  
-                          _interstitialAd.show();   // <- here
-                            }
+                                  _interstitialAd.show();   // <- here
+                                  }
+                                  urlController.clear();
+                                 setState(() {
+                                    _searchStarted = true;
+                                   InterstitialAd.load(
+                                    adUnitId: "ca-app-pub-8947607922376336/2290357465",
+                                    request: const AdRequest(),
+                                    adLoadCallback: InterstitialAdLoadCallback(
+                                      onAdLoaded: (InterstitialAd ad) {
+                                        _interstitialAd = ad;
+                                        _isInterstitialAdLoaded = true;
+                                      },
+                                      onAdFailedToLoad: (LoadAdError error) {
+                                        _isInterstitialAdLoaded = false;
+                                        _interstitialAd.dispose();
+                                      },
+                                    ),
+                                  );
+                                 });
+                                }else{
+                                  setState(() {
+                                    _noTexttoSearch = true;
+                                  });
+
+                                }
+
+                              }
+                              
                             },
                             child: Container(
                               height: 40,
                               width: 150,
                               child: Center(
                                   child: Text(
-                                "Download",
+                                 _searchStarted == true ?"Download Done" :"Download",
                                 style: TextStyle(color: Colors.white),
                               )),
                               decoration: BoxDecoration(
-                                color: Colors.deepPurple,
+                                color: _searchStarted == true ? Colors.green : Colors.deepPurple,
                                 borderRadius: const BorderRadius.all(
                                   const Radius.circular(25),
                                 ),
@@ -219,10 +275,11 @@ void dispose() {
                         ),
                 ),
               ),
-              // Container(
-              //   height: 200,
-              //   child: Center(child: Text("Made in ❤️ with Flutter")),
-              // ),
+              _noTexttoSearch ?
+              Container(
+                // height: 200,
+                child: Center(child: Text("Please Paste the Instagram Reel only..", style: TextStyle(color: Colors.red),),),
+              ) : Container(),
             ],
           ),
         ),

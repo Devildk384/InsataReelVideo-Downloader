@@ -12,6 +12,8 @@ import 'package:InstaReels/Controller/instagram_login.dart';
 import 'package:InstaReels/model/insta_post_with_login.dart';
 import 'package:InstaReels/model/insta_post_without_login.dart';
 import 'package:webview_cookie_manager/webview_cookie_manager.dart' as wb;
+import 'package:external_path/external_path.dart';
+import 'dart:math';
 
 class DownloadController extends GetxController {
   var processing = false.obs;
@@ -19,6 +21,8 @@ class DownloadController extends GetxController {
   String? path;
   var box = GetStorage();
   Dio dio = Dio();
+  Random random = new Random();
+
   Future<String?> _startDownload(String link, BuildContext context) async {
     // Asking for video storage permission 
     await Permission.storage.request();
@@ -32,16 +36,11 @@ class DownloadController extends GetxController {
     // Build the url
     var linkParts = link.replaceAll(" ", "").split("/");
     var url = '${linkParts[0]}//${linkParts[2]}/${linkParts[3]}/${linkParts[4]}' + "?__a=1&__d=dis";
-    print(url);
-    print("urlll");
     // Make Http requiest to get the download link of video
     var httpClient = new HttpClient();
     String? videoURLLLLL;
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
-      print(request);
-      print("request");
-
       gotCookies.forEach((element) {
         request.cookies.add(Cookie(element.name, element.value));
       });
@@ -59,7 +58,7 @@ class DownloadController extends GetxController {
         }
       }
     } catch (exception) {
-      log(exception.toString());
+      // log(exception.toString());
       // Login to instagram in case of Cookie expire or download any private account's video
       await Navigator.push(context, MaterialPageRoute(builder: (_) => InstaLogin()));
     }
@@ -68,12 +67,16 @@ class DownloadController extends GetxController {
     if (videoURLLLLL == null) {
       return null;
     } else {
-      var appDocDir = await getTemporaryDirectory();
-      String savePath = appDocDir.path + "/temp.mp4";
-      print(savePath);
-      await dio.download(videoURLLLLL, savePath);
-      final result = await ImageGallerySaver.saveFile(savePath,isReturnPathOfIOS: true);
-      return result["filePath"];
+     String path = await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DOWNLOADS);
+        print(path);
+      // var appDocDir = await getTemporaryDirectory();
+      // String savePath = appDocDir.path + "/temp.mp4";
+      // print(savePath);
+      var name = "${path}/${random.nextInt(90)+ random.nextInt(100)}.mp4";
+     var res = await dio.download(videoURLLLLL, name);
+     return name;
+    //  print(res);
     }
   }
 
@@ -84,7 +87,6 @@ class DownloadController extends GetxController {
       path = null;
       update();
       await _startDownload(link, context).then((value) {
-        print(value);
         if (value == null) throw Exception();
         path = value;
         update();

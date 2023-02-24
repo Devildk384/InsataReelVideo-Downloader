@@ -16,7 +16,7 @@ class _DownloadedListState extends State<DownloadedList> {
   void initState() {
     allVideos = box.read("allVideo") ?? [];
     loadingVideos = false;
-
+    print(allVideos);
     setState(() {
       
     });
@@ -34,7 +34,7 @@ class _DownloadedListState extends State<DownloadedList> {
           color: Colors.black
         ),
       ),
-      body: loadingVideos?Center(child: CupertinoActivityIndicator(),):
+      body: loadingVideos ? Center(child: CupertinoActivityIndicator(),) :
        GridView.count(crossAxisCount: 2,
        childAspectRatio: 1/1.3,
        children:List<Widget>.generate(allVideos.length, (index) => Padding(
