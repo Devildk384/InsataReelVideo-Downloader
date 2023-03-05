@@ -170,20 +170,6 @@ void dispose() {
                     setState(() {
                         _searchStarted = false;
                         _noTexttoSearch =  false;
-                          InterstitialAd.load(
-                                    adUnitId: "ca-app-pub-8947607922376336/2290357465",
-                                    request: const AdRequest(),
-                                    adLoadCallback: InterstitialAdLoadCallback(
-                                      onAdLoaded: (InterstitialAd ad) {
-                                        _interstitialAd = ad;
-                                        _isInterstitialAdLoaded = true;
-                                      },
-                                      onAdFailedToLoad: (LoadAdError error) {
-                                        _isInterstitialAdLoaded = false;
-                                        _interstitialAd.dispose();
-                                      },
-                                    ),
-                                  );
                     });
                   },
                   decoration: InputDecoration(
@@ -231,20 +217,6 @@ void dispose() {
                                   urlController.clear();
                                  setState(() {
                                     _searchStarted = true;
-                                   InterstitialAd.load(
-                                    adUnitId: "ca-app-pub-8947607922376336/2290357465",
-                                    request: const AdRequest(),
-                                    adLoadCallback: InterstitialAdLoadCallback(
-                                      onAdLoaded: (InterstitialAd ad) {
-                                        _interstitialAd = ad;
-                                        _isInterstitialAdLoaded = true;
-                                      },
-                                      onAdFailedToLoad: (LoadAdError error) {
-                                        _isInterstitialAdLoaded = false;
-                                        _interstitialAd.dispose();
-                                      },
-                                    ),
-                                  );
                                  });
                                 }else{
                                   setState(() {
