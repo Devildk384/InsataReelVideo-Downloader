@@ -51,30 +51,30 @@ void initState() {
     request: const AdRequest(),
   )..load();
 
-  // RewardedAd.load(
-  //   adUnitId: "ca-app-pub-8947607922376336/5113360720",
-  //   request: const AdRequest(),
-  //   rewardedAdLoadCallback: RewardedAdLoadCallback(
-  //     onAdLoaded: (ad) {
-  //       _rewardedAd = ad;
-  //       ad.fullScreenContentCallback = FullScreenContentCallback(
-  //         onAdDismissedFullScreenContent: (ad) {
-  //           setState(() {
-  //             _isRewardedAdLoaded = false;
-  //           });
-  //         },
-  //       );
-  //       setState(() {
-  //         _isRewardedAdLoaded = true;
-  //       });
-  //     },
-  //     onAdFailedToLoad: (err) {
-  //       setState(() {
-  //         _isRewardedAdLoaded = false;
-  //       });
-  //     },
-  //   ),
-  // );
+  RewardedAd.load(
+    adUnitId: "ca-app-pub-8947607922376336/5113360720",
+    request: const AdRequest(),
+    rewardedAdLoadCallback: RewardedAdLoadCallback(
+      onAdLoaded: (ad) {
+        _rewardedAd = ad;
+        ad.fullScreenContentCallback = FullScreenContentCallback(
+          onAdDismissedFullScreenContent: (ad) {
+            setState(() {
+              _isRewardedAdLoaded = false;
+            });
+          },
+        );
+        setState(() {
+          _isRewardedAdLoaded = true;
+        });
+      },
+      onAdFailedToLoad: (err) {
+        setState(() {
+          _isRewardedAdLoaded = false;
+        });
+      },
+    ),
+  );
 
    InterstitialAd.load(
     adUnitId: "ca-app-pub-8947607922376336/2290357465",
@@ -152,7 +152,7 @@ void dispose() {
                               child: downloadController.path != null
                                   ? Container(
                                       child: GenrateVideoFrompath(
-                                          downloadController.path ?? ""))
+                                          downloadController.path ?? "", true))
                                   : Center(child: Text("No recent download")),
                             ),
                           ]),
@@ -204,40 +204,25 @@ void dispose() {
                                 setState(() {
                                   _noTexttoSearch = true;
                                 });
-                              }else{
-                                if (urlController.text.contains("https://www.instagram.com/reel")) {
-                                  
-                                // urlController.text.contains("https://www.instagram.com/reels/videos");
-                                downloadController.downloadReal(
+                              }else if (urlController.text.contains("https://www.instagram.com/reel")) {
+                                  downloadController.downloadReal(
                                   urlController.text, context);
-
-                                  if (_isInterstitialAdLoaded) {  
-                                  _interstitialAd.show();   // <- here
-                                  }
                                   urlController.clear();
-                                 setState(() {
-                                    _searchStarted = true;
-                                 });
-                                }else{
-                                  setState(() {
-                                    _noTexttoSearch = true;
-                                  });
-
+                                //  setState(() {
+                                //     _searchStarted = true;
+                                //  });
                                 }
-
-                              }
-                              
                             },
                             child: Container(
                               height: 40,
                               width: 150,
                               child: Center(
                                   child: Text(
-                                 _searchStarted == true ?"Download Done" :"Download",
+                                 downloadController.path != null ?"Download Done" :"Download Now",
                                 style: TextStyle(color: Colors.white),
                               )),
                               decoration: BoxDecoration(
-                                color: _searchStarted == true ? Colors.green : Colors.deepPurple,
+                                color: downloadController.path != null  ? Colors.green : Colors.deepPurple,
                                 borderRadius: const BorderRadius.all(
                                   const Radius.circular(25),
                                 ),
@@ -251,7 +236,11 @@ void dispose() {
               Container(
                 // height: 200,
                 child: Center(child: Text("Please Paste the Instagram Reel only..", style: TextStyle(color: Colors.red),),),
-              ) : Container(),
+              ) : Container(
+                
+                
+              ),
+             
             ],
           ),
         ),

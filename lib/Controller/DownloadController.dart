@@ -37,10 +37,13 @@ class DownloadController extends GetxController {
     var linkParts = link.replaceAll(" ", "").split("/");
     var url = '${linkParts[0]}//${linkParts[2]}/${linkParts[3]}/${linkParts[4]}' + "?__a=1&__d=dis";
     // Make Http requiest to get the download link of video
+    print(url);
     var httpClient = new HttpClient();
     String? videoURLLLLL;
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
+      print(request);
+      print("REQUEST");
       gotCookies.forEach((element) {
         request.cookies.add(Cookie(element.name, element.value));
       });
@@ -48,18 +51,24 @@ class DownloadController extends GetxController {
       if (response.statusCode == HttpStatus.OK) {
         var json = await response.transform(utf8.decoder).join();
         var data = jsonDecode(json);
+        print(data);
+        print("data");
           // print(data["graphql"]["shortcode_media"]["display_resources"]);
         if (isLogin) {
+          print("LOGIN");
           InstaPostWithLogin postWithLogin = InstaPostWithLogin.fromJson(data);
           videoURLLLLL = postWithLogin.items?.first.videoVersions?.first.url;
         } else {
+          print("WITHOUT LOGIN");
           InstaPostWithoutLogin post = InstaPostWithoutLogin.fromJson(data);
           videoURLLLLL = post.graphql?.shortcodeMedia?.videoUrl;
         }
+      }else{
+              await Navigator.push(context, MaterialPageRoute(builder: (_) => InstaLogin()));
+
       }
     } catch (exception) {
-      // log(exception.toString());
-      // Login to instagram in case of Cookie expire or download any private account's video
+
       await Navigator.push(context, MaterialPageRoute(builder: (_) => InstaLogin()));
     }
 
@@ -87,6 +96,8 @@ class DownloadController extends GetxController {
       path = null;
       update();
       await _startDownload(link, context).then((value) {
+        print(value);
+        print("VALUE");
         if (value == null) throw Exception();
         path = value;
         update();

@@ -22,7 +22,7 @@ loadAppOpenAd() {
 Future<void> main() async {
   await GetStorage.init();
   await MobileAds.instance.initialize();
-  // loadAppOpenAd();
+  loadAppOpenAd();
   runApp(const MyApp());
 }
 

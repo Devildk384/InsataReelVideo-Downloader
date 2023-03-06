@@ -39,7 +39,7 @@ class _DownloadedListState extends State<DownloadedList> {
        childAspectRatio: 1/1.3,
        children:List<Widget>.generate(allVideos.length, (index) => Padding(
          padding: const EdgeInsets.all(8.0),
-         child: GenrateVideoFrompath(allVideos[index]),
+         child: GenrateVideoFrompath(allVideos[index], false),
        )),),
     );
   }

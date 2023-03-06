@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:InstaReels/VideoPlayer.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class GenrateVideoFrompath extends StatefulWidget {
   final String path;
-  const GenrateVideoFrompath(this.path, {super.key});
+  final bool isreward;
+  const GenrateVideoFrompath(this.path, this.isreward, {super.key});
   @override
   _GenrateVideoFrompathState createState() => _GenrateVideoFrompathState();
 }
@@ -14,10 +16,37 @@ class GenrateVideoFrompath extends StatefulWidget {
 class _GenrateVideoFrompathState extends State<GenrateVideoFrompath> {
   var uint8list = null;
   bool loading = true;
+  late RewardedAd _rewardedAd;
+  bool _isRewardedAdLoaded= false;
+  bool isrewardValue = true; 
   @override
   void initState() {
     genrateThumb();
     loading = false;
+ RewardedAd.load(
+    adUnitId: "ca-app-pub-8947607922376336/5113360720",
+    request: const AdRequest(),
+    rewardedAdLoadCallback: RewardedAdLoadCallback(
+      onAdLoaded: (ad) {
+        _rewardedAd = ad;
+        ad.fullScreenContentCallback = FullScreenContentCallback(
+          onAdDismissedFullScreenContent: (ad) {
+            setState(() {
+              _isRewardedAdLoaded = false;
+            });
+          },
+        );
+        setState(() {
+          _isRewardedAdLoaded = true;
+        });
+      },
+      onAdFailedToLoad: (err) {
+        setState(() {
+          _isRewardedAdLoaded = false;
+        });
+      },
+    ),
+  );
     super.initState();
   }
 
@@ -51,7 +80,17 @@ class _GenrateVideoFrompathState extends State<GenrateVideoFrompath> {
           ? CupertinoActivityIndicator()
           : InkWell(
               onTap: () {
-                Get.to(VideoPlayer(widget.path));
+                if (widget.isreward && isrewardValue) {
+                  _rewardedAd.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) { 
+                     Get.to(VideoPlayer(widget.path));
+                     setState(() {
+
+                       isrewardValue =false;
+                     });
+                   });
+                }else{
+                   Get.to(VideoPlayer(widget.path));
+                }
               },
               child: Stack(
                 alignment: AlignmentDirectional.center,
