@@ -42,8 +42,6 @@ class DownloadController extends GetxController {
     String? videoURLLLLL;
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
-      print(request);
-      print("REQUEST");
       gotCookies.forEach((element) {
         request.cookies.add(Cookie(element.name, element.value));
       });
@@ -51,15 +49,11 @@ class DownloadController extends GetxController {
       if (response.statusCode == HttpStatus.OK) {
         var json = await response.transform(utf8.decoder).join();
         var data = jsonDecode(json);
-        print(data);
-        print("data");
           // print(data["graphql"]["shortcode_media"]["display_resources"]);
         if (isLogin) {
-          print("LOGIN");
           InstaPostWithLogin postWithLogin = InstaPostWithLogin.fromJson(data);
           videoURLLLLL = postWithLogin.items?.first.videoVersions?.first.url;
         } else {
-          print("WITHOUT LOGIN");
           InstaPostWithoutLogin post = InstaPostWithoutLogin.fromJson(data);
           videoURLLLLL = post.graphql?.shortcodeMedia?.videoUrl;
         }
